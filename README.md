@@ -122,12 +122,16 @@ Note that the videos are listed in alphabetical order of file names so it is goo
 We don't want to repeatedly pull the power cable as it will eventually corrupt the SD card and we don't want to plug in a monitor & keyboard so we have a php script that will kill the server and have it on hidden URL. This is something we would never do on a "real" server.
 
 sudo visudo
-   # Add the following line below "pi ALL etc." and exit the visudo editor:
-   www-data ALL = NOPASSWD: /sbin/shutdown
+
+Add the following line below "pi ALL etc." and exit the visudo editor:
+
+www-data ALL = NOPASSWD: /sbin/shutdown
+
 sudo nano /var/www/shutdown.php
-   # Absolute minimum contents of the shutdown.php file:
-   <?php system('sudo /sbin/shutdown -h now'); ?>
+
+Absolute minimum contents of the shutdown.php file:
    
+system('sudo /sbin/shutdown -h now');   
 
 ## Preparing the iPads (one off procedure)
 
@@ -153,9 +157,9 @@ Plug the USB stick into the Raspberry Pi.
 
 On each iPad:
 
-1 Settings > Wifi > DigitalStories
-2 Home Screen > DigitalStories 
-3 Triple tap home button.
+- Settings > Wifi > DigitalStories
+- Home Screen > DigitalStories 
+- Triple tap home button.
 
 ## On the day teardown
 

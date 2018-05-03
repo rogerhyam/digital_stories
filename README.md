@@ -88,7 +88,10 @@ sudo apt-get install php libapache2-mod-php -y
 
 ## Creating the website
 
-Copy the code from the repository to the /var/www/html You could just clone it if you have install git.
+Copy the code from the repository to the /var/www/html You could just clone it if you have installed git.
+
+cd /var/www/html
+git clone https://github.com/rogerhyam/digital_stories.git .
 
 [Consider changing the name of the shutdown php file so workshop participants can't find it!]
 
@@ -96,13 +99,23 @@ Create a symbolic link called videos to where the USB stick will be auto mounted
 
 ln -s /media/usb/videos videos
 
-
-
 ## Preparing the USB memory stick
 
-The memory stick should be FAT formatted.
+The memory stick should be FAT formatted and named 'DIGITALSTORIES'.
 
+There should be a directory in the root called 'videos' which contains the mp4 format videos.
 
+e.g. 
+
+001_myvideo.mp4
+
+For each video include two other files with the same name but extra endings.
+
+001_myvideo.mp4.jpg should be a square image to be used as a thumbnail. 300px by 300px is a good size.
+
+001_myvideo.mp4.txt should be a plain text file (UTF-8) with two lines in it. The first line is the title of the video. The second line is the description.
+
+Note that the videos are listed in alphabetical order of file names so it is good to start them with zero spaced numbers. If you think you are going to move them around then you could start by naming them 010_xyz.mp4 020_abc.mp4 etc then it is easy to insert new ones.
 
 ## Enabling shutdown of the Pi over the WiFi
 
@@ -114,6 +127,44 @@ sudo visudo
 sudo nano /var/www/shutdown.php
    # Absolute minimum contents of the shutdown.php file:
    <?php system('sudo /sbin/shutdown -h now'); ?>
+   
+
+## Preparing the iPads (one off procedure)
+
+On the iPad go into settings and join the DigitalStories WiFi network (assuming the Pi is running).
+
+Open Safari and go to http://192.168.4.1 - you should see the videos and it should work but not be full screen.
+
+Click on the sharing link next to the address bar and choose "Add to Home Screen".
+
+In the Settings app go General > Accessibility > Guided Access and turn it on. (Remember the passcode)
+
+Go to the Home Screen and tap the Digital Stories icon.
+
+Triple tap the home button.
+
+You should now be in the video player, full screen with no way to leave it except triple tapping the home button and entering the passcode. 
+
+## On the day setup
+
+Plug the Raspberry Pi into the power (without the USB stick in it) and wait a couple of minutes for it to boot. Maybe start getting the iPads out.
+
+Plug the USB stick into the Raspberry Pi.
+
+On each iPad:
+
+1 Settings > Wifi > DigitalStories
+2 Home Screen > DigitalStories 
+3 Triple tap home button.
+
+## On the day teardown
+
+On one of the iPads (or your phone) open Safari and go to http://192.168.4.1/maxandy1.php then wait 2 minutes.
+
+Unplug and pack away.
+
+
+
 
 
 

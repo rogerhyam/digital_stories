@@ -38,20 +38,115 @@ error_reporting(E_ALL);
 				text-decoration: none;
 				color: gray;
 			}
+			.running-video{
+				background-color: gray !important;
+			}
+			.running-video a{
+				color: white;
+			}
 		</style>
 		
 		<script type="text/javascript" src="jquery-3.3.1.min.js"></script>
 
 		<script type="text/javascript">
 			
-			$(function() {
-			
-				$('#my-video-player').hide();
+			$(document).ready(function(){
 				
+				// bit of a namespace object
+		        var digitalStories = {};
+				
+				$('#my-video-player').hide();
+				digitalStories.currentVideoLink = null;
 				
 				$('.video-link').on('click', function(){
+					var videoLink = $(this);
+					digitalStories.selectVideo(videoLink);
+					digitalStories.startVideo();
+				});
+				
+				$('#my-video-player').get(0).onended = function() {
+				    $('#my-video-player').slideUp('slow');
+				};
+				
+				digitalStories.toggleVideo = function(){
 					
-					var file = $(this).data('video-name');
+					// find the one which is highlighted and start it running or stop it
+					var player = $('#my-video-player').get(0);
+					
+					// stop it
+					if(player.paused){
+						console.log('starting');
+						digitalStories.startVideo();
+						setTimeout(digitalStories.gameLoop, 1000);
+					}else{
+						console.log('stopping');
+						player.pause();
+						$('#my-video-player').slideUp('slow');
+						setTimeout(digitalStories.gameLoop, 1000);
+					}
+					
+				}
+				
+				digitalStories.nextVideo = function(){
+					
+					var player = $('#my-video-player').get(0);
+					player.pause();
+					$('#my-video-player').slideUp('slow');
+					
+					// find the one that is highlighted.
+					if($('li.running-video').length > 0){
+						
+						// get the next one if there is one.
+						var next = $('li.running-video').next();
+						if(next.length > 0){
+							digitalStories.selectVideo(next.find('.video-link'));
+						}else{
+							// nothing if we don't have another
+							// just listen for a button press
+							digitalStories.gameLoop();
+						}
+						
+					}else{
+						digitalStories.selectVideo($('.video-link').first());
+					}
+					
+				}
+				
+				digitalStories.previousVideo = function(){
+					
+					var player = $('#my-video-player').get(0);
+					player.pause();
+					$('#my-video-player').slideUp('slow');
+					
+					// find the one that is highlighted.
+					if($('li.running-video').length > 0){
+						
+						// get the next one if there is one.
+						var prev = $('li.running-video').prev();
+						if(prev.length > 0){
+							console.log('got a previous');
+							digitalStories.selectVideo(prev.find('.video-link'));
+						}else{
+							// nothing if we don't have another
+							// just listen for a button press
+							digitalStories.gameLoop();
+						}
+						
+					}else{
+						console.log('going to last');
+						digitalStories.selectVideo($('.video-link').last());
+					}
+				}
+				
+				digitalStories.selectVideo = function(videoLink){
+					
+					digitalStories.currentVideoLink = videoLink;
+					
+					// remove highlights
+					$('.video-link').parent().removeClass('running-video');
+					videoLink.parent().addClass('running-video');
+					
+					var file = videoLink.data('video-name');
 					var player = $('#my-video-player').get(0);
 					
 					// stop it
@@ -68,14 +163,47 @@ error_reporting(E_ALL);
 					
 					// start it up
 					player.load();
-					$('#my-video-player').slideDown('slow');
-					player.play();
 					
-				});
+					// listen for button presses
+					setTimeout(digitalStories.gameLoop, 500);
+					
+				}
 				
-				$('#my-video-player').get(0).onended = function() {
-				    $('#my-video-player').slideUp('slow');
-				};
+				digitalStories.startVideo = function(){
+					$('#my-video-player').slideDown('slow');
+					var player = $('#my-video-player').get(0);
+					player.play();
+				}
+				
+				
+				// game looper to control from joystick
+		        digitalStories.gameLoop = function(){
+					
+					// this must run as a singleton of we get double button presses            
+		            var gp = navigator.getGamepads()[0];
+            
+		            // sometimes it isn't there so we wait an poll again
+		            if (!gp){
+		                setTimeout(digitalStories.gameLoop, 1000);
+		                return;
+		            }
+            
+		            if(gp.buttons[2].value == 1){
+		                console.log('button 2 pressed');
+						digitalStories.previousVideo();
+		            }else if(gp.buttons[1].value == 1){
+						console.log('button 1 pressed');
+						digitalStories.toggleVideo();
+		            }else if(gp.buttons[0].value == 1){
+						console.log('button 0 pressed');
+		                digitalStories.nextVideo();
+		            }else{
+		                setTimeout(digitalStories.gameLoop, 100);
+		            }
+		        }
+				
+				// kick off the game loop
+				setTimeout(digitalStories.nextVideo , 1000);
 
 			});
 			
@@ -94,6 +222,7 @@ error_reporting(E_ALL);
 $videos = glob("videos/*.mp4");
 
 foreach($videos as $video){
+	
     echo "<li><a href=\"#\" class=\"video-link\" data-video-name=\"$video\">";
 	echo "<img src=\"$video.jpg\" />";
 	

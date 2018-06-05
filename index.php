@@ -44,6 +44,12 @@ error_reporting(E_ALL);
 			.running-video a{
 				color: white;
 			}
+			
+			#my-video-player{
+				width: 100%;	
+				margin-top: auto;
+			}
+			
 		</style>
 		
 		<script type="text/javascript" src="jquery-3.3.1.min.js"></script>
@@ -66,6 +72,12 @@ error_reporting(E_ALL);
 				
 				$('#my-video-player').get(0).onended = function() {
 				    $('#my-video-player').slideUp('slow');
+					$('#menu-list').show();
+				};
+				
+				$('#my-video-player').get(0).onpause = function() {
+				    $('#my-video-player').slideUp('slow');
+					$('#menu-list').show();
 				};
 				
 				digitalStories.toggleVideo = function(){
@@ -171,6 +183,7 @@ error_reporting(E_ALL);
 				
 				digitalStories.startVideo = function(){
 					$('#my-video-player').slideDown('slow');
+					$('#menu-list').hide();
 					var player = $('#my-video-player').get(0);
 					player.play();
 				}
@@ -213,11 +226,10 @@ error_reporting(E_ALL);
 	<body>
 
 
-<video id="my-video-player" width="100%" controls >
+<video id="my-video-player" controls >
   <!-- <source id="my-video-source" type="video/mp4"> -->
 </video>
-
-<ul>
+<ul id="menu-list">
 <?php 
 $videos = glob("videos/*.mp4");
 

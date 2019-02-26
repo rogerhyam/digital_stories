@@ -36,12 +36,15 @@ sudo apt-get install dnsmasq hostapd
 sudo systemctl stop dnsmasq
 sudo systemctl stop hostapd
 
+sudo reboot
+
 sudo nano /etc/dhcpcd.conf
 
 And add 
 
- interface wlan0
-    static ip_address=192.168.4.1/24
+interface wlan0
+	static ip_address=192.168.4.1/24	
+	nohook wpa_supplicant
 
 sudo service dhcpcd restart
 
@@ -70,14 +73,20 @@ rsn_pairwise=CCMP
 
 [Consider changing the SSID and passphrase!]
 
+sudo nano /etc/default/hostapd
+DAEMON_CONF="/etc/hostapd/hostapd.conf"
+
 sudo nano /etc/sysctl.conf
 
 And uncomment 
 net.ipv4.ip_forward=1
 
 sudo iptables -t nat -A  POSTROUTING -o eth0 -j MASQUERADE
-
+	
 sudo sh -c "iptables-save > /etc/iptables.ipv4.nat"
+
+Edit /etc/rc.local and add this just above "exit 0" to install these rules on boot.
+iptables-restore < /etc/iptables.ipv4.nat
 
 USB Stick should be FAT format only and will be automounted by pmount
 
@@ -98,6 +107,14 @@ git clone https://github.com/rogerhyam/digital_stories.git .
 Create a symbolic link called videos to where the USB stick will be auto mounted.
 
 ln -s /media/usb/videos videos
+
+## Make sure the USB will auto mount
+
+sudo apt-get install usbmount
+
+Make sure it works in Stretch by changing MountFlags=slave to MountFlags=shared here:
+sudo nano /lib/systemd/system/systemd-udevd.service
+
 
 ## Preparing the USB memory stick
 

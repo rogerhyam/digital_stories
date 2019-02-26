@@ -46,8 +46,19 @@ error_reporting(E_ALL);
 			}
 			
 			#my-video-player{
-				width: 100%;	
+
+				position: fixed;
+				right:0;
+				bottom: 0;
+				min-width: 100%;
+				min-height: 100%;
+				width: auto;
+				height: auto;
+				
+/*				width: 100%;	
+
 				margin-top: auto;
+*/
 			}
 			
 		</style>
